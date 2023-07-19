@@ -1,0 +1,65 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem;
+  min-height: 100vh;
+}
+
+.description {
+  /*display: inherit;*/
+  justify-content: inherit;
+  align-items: inherit;
+  font-size: 0.85rem;
+  max-width: var(--max-width);
+  width: 100%;
+  z-index: 2;
+  font-family: var(--font-mono);
+}
+
+.description a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card {
+  position: relative;
+  margin: 0;
+  padding: 1rem;
+  max-width: 500px;
+  background-color: rgba(var(--callout-rgb), 0.5);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  border-radius: var(--border-radius);
+}
+
+.form{
+  display: flex;
+  align-items: center;
+}
+.input{
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-right: 8px;
+  flex: 1;
+}
+.button{
+  border: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+.note{
+  display: block;
+  max-width: 32rem;
+}
+
+@media (prefers-color-scheme: dark) {
+
+}
