@@ -7,9 +7,9 @@
 
 This package is built to work with Next.js v13 App router and Server Components & Actions.
 
-This Next.js package enables secure storage of sessions in a server side store like `express-session` or `redis` or others, the package uses the next.js dynamic function `cookies()` to store the session id on the client side and that session id is associated with user data on the server store.
+This Next.js package enables secure storage of sessions in a server side store like `express-session` or `redis` or others, the package uses the next.js dynamic function [cookies()](https://nextjs.org/docs/app/api-reference/functions/cookies) to store the session id on the client side and that session id is then associated with user data on the server store.
 
-Package was inspired by `express-session` & `next-session`.
+Package was inspired by [express-session](https://www.npmjs.com/package/express-session) & [next-session](https://www.npmjs.com/package/next-session).
  
 
 ## Setup
