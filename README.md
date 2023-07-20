@@ -137,7 +137,7 @@ As we mentioned before by default the package will use `MemoryStore`, which is a
 	```
  
 ### Other compatible stores
-Any [express session store pacakge](https://github.com/expressjs/session/tree/master#compatible-session-stores) should be supported as long as they're passed through `promisifyStore`
+Any [express session store package](https://github.com/expressjs/session/tree/master#compatible-session-stores) should be supported as long as they're passed through `promisifyStore`
  
 ## Example
 a Next.js demo app is located under `./example` of this repo.
