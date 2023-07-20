@@ -16,14 +16,6 @@ export default function nextAppSession<T extends SessionRecord>(
 ): () => AppSession<T> {
   const store = options.store || new MemoryStore();
   return () => new AppSession<T>(store, options);
-  // let store = options.store as Store;
-  // if (!store) {
-  //   if (!(global as any).sessionMemoryStore) {
-  //     (global as any).sessionMemoryStore = new MemoryStore();
-  //   }
-  //   store = (global as any).sessionMemoryStore as Store;
-  // }
-  // return () => new AppSession<T>(store, options);
 }
 
 export class AppSession<T extends SessionRecord = SessionRecord>
@@ -50,7 +42,6 @@ export class AppSession<T extends SessionRecord = SessionRecord>
     this.cookieOpts = options?.cookie;
     this.touchAfter = options?.touchAfter;
 
-    // this.sid = this._getID();
     return this;
   }
 
@@ -103,8 +94,8 @@ export class AppSession<T extends SessionRecord = SessionRecord>
   }
   async setAll(data: T): Promise<void> {
     this._initID();
-    const guest = this._getID();
-    if (!guest || guest == '') {
+    const existingID = this._getID();
+    if (!existingID || existingID == '') {
       await this.getCookies().set(this.name, this.encode(this.sid), {
         path: this.cookieOpts?.path || '/',
         httpOnly: this.cookieOpts?.httpOnly ?? true,
@@ -113,7 +104,7 @@ export class AppSession<T extends SessionRecord = SessionRecord>
         secure: this.cookieOpts?.secure || false
       });
     }
-    // await this.store.set(this._getID(), { ...data, cookie: this.cookieOpts });
+    // await this.store.set(this.sid, { ...data, cookie: this.cookieOpts });
     await this.store.set(this.sid, { ...data });
   }
   async destroy(key?: string | keyof T | undefined): Promise<void> {
