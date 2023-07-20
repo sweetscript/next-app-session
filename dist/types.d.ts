@@ -11,8 +11,8 @@ export type SessionRecord = Record<string, any>;
 export type SessionData<T = SessionRecord> = T & {
     cookie: CookieOptions;
 };
-export interface Store {
-    get(sid: string): Promise<SessionData<any> | null | undefined>;
+export interface Store<T = any> {
+    get(sid: string): Promise<SessionData<T> | null | undefined>;
     set(sid: string, sess: SessionData<any>): Promise<void>;
     destroy(sid: string): Promise<void>;
     touch?(sid: string, sess: SessionData<any>): Promise<void>;

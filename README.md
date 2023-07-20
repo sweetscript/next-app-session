@@ -106,6 +106,9 @@ As we mentioned before by default the package will use `MemoryStore`, which is a
 3. Install redis packages in your project:
 	```
 	npm i ioredis connect-redis
+ 	```
+ 	```
+ 	npm i -D @types/connect-redis
 	```
 3. Update the session config so its like follows with the port you're redis instance is running on:
 	```typescript
@@ -114,17 +117,17 @@ As we mentioned before by default the package will use `MemoryStore`, which is a
 	import RedisStoreFactory from 'connect-redis';
 
 	export const session = nextAppSession<MySessionData>({
-    name: 'EXAMPLE_SID',
-    secret: 'secret goes here' ,
-    // assign redis store
-    store: promisifyStore(
-      new (RedisStoreFactory(expressSession))({
-        client: new Redis({
-          host: 'localhost',
-          port: 6379
-        })
-      })
-    ),
+    	name: 'EXAMPLE_SID',
+    	secret: 'secret goes here' ,
+    	// assign redis store
+    	store: promisifyStore(
+    	  new (RedisStoreFactory(expressSession))({
+			client: new Redis({
+			  host: 'localhost',
+			  port: 6379
+			})
+      	  })
+    	),
 	}); 
 	```
 ## Example

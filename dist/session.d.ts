@@ -1,19 +1,18 @@
 import { CookieOptions, Options, SessionData, SessionHandler, SessionRecord, Store } from './types';
-import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 export default function nextAppSession<T extends SessionRecord>(options: Options): () => AppSession<T>;
 export declare class AppSession<T extends SessionRecord = SessionRecord> implements SessionHandler<T> {
     static instance: AppSession;
     protected store: Store;
-    protected cookies: RequestCookies | ReadonlyRequestCookies;
     protected sid: string;
     protected name: string;
     protected secret?: string;
     protected genid: () => string;
     protected cookieOpts?: Partial<CookieOptions>;
     protected touchAfter?: boolean;
-    constructor(store: Store, cookies: RequestCookies | ReadonlyRequestCookies, options: Options);
+    constructor(store: Store, options: Options);
+    private getCookies;
     private _getID;
+    private _initID;
     private encode;
     private decode;
     all(): Promise<SessionData<T> | null | undefined>;

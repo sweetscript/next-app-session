@@ -4,7 +4,12 @@ export class MemoryStore implements Store {
   store: Map<string, string>;
 
   constructor() {
+    if ((global as any).sessionMemoryStore) {
+      return (global as any).sessionMemoryStore;
+    }
     this.store = new Map();
+    (global as any).sessionMemoryStore = this;
+    return this;
   }
 
   async get(sid: string): Promise<SessionData | null> {

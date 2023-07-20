@@ -6,8 +6,6 @@ import {
   SessionRecord,
   Store
 } from './types';
-import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import { nanoid } from 'nanoid';
 import { MemoryStore } from './memory';
 import signature from 'cookie-signature';
@@ -17,7 +15,15 @@ export default function nextAppSession<T extends SessionRecord>(
   options: Options
 ): () => AppSession<T> {
   const store = options.store || new MemoryStore();
-  return () => new AppSession<T>(store, cookies(), options);
+  return () => new AppSession<T>(store, options);
+  // let store = options.store as Store;
+  // if (!store) {
+  //   if (!(global as any).sessionMemoryStore) {
+  //     (global as any).sessionMemoryStore = new MemoryStore();
+  //   }
+  //   store = (global as any).sessionMemoryStore as Store;
+  // }
+  // return () => new AppSession<T>(store, options);
 }
 
 export class AppSession<T extends SessionRecord = SessionRecord>
@@ -25,7 +31,6 @@ export class AppSession<T extends SessionRecord = SessionRecord>
 {
   static instance: AppSession;
   protected store: Store;
-  protected cookies: RequestCookies | ReadonlyRequestCookies;
   protected sid: string;
   protected name: string;
   protected secret?: string;
@@ -33,33 +38,36 @@ export class AppSession<T extends SessionRecord = SessionRecord>
   protected cookieOpts?: Partial<CookieOptions>;
   protected touchAfter?: boolean;
 
-  constructor(
-    store: Store,
-    cookies: RequestCookies | ReadonlyRequestCookies,
-    options: Options
-  ) {
+  constructor(store: Store, options: Options) {
     if (AppSession.instance) {
       return AppSession.instance as AppSession<T>;
     }
     AppSession.instance = this;
     this.store = store;
-    this.cookies = cookies;
-    this.name = options.name || 'sid';
-    this.secret = options.secret;
-    this.genid = options.genid || nanoid;
-    this.cookieOpts = options.cookie;
-    this.touchAfter = options.touchAfter;
+    this.name = options?.name || 'sid';
+    this.secret = options?.secret;
+    this.genid = options?.genid || nanoid;
+    this.cookieOpts = options?.cookie;
+    this.touchAfter = options?.touchAfter;
 
-    this.sid = this._getID();
+    // this.sid = this._getID();
     return this;
   }
 
-  private _getID(): string {
-    let id = this.decode(this.cookies.get(this.name)?.value);
+  private getCookies() {
+    return cookies();
+  }
+
+  private _getID(): string | null | undefined {
+    return this.decode(this.getCookies().get(this.name)?.value);
+  }
+
+  private _initID() {
+    let id = this._getID();
     if (!id && this.genid) {
       id = this.genid();
     }
-    return id || '';
+    this.sid = id || '';
   }
 
   private encode(sid: string): string {
@@ -73,6 +81,7 @@ export class AppSession<T extends SessionRecord = SessionRecord>
   }
 
   async all(): Promise<SessionData<T> | null | undefined> {
+    this._initID();
     const data = await this.store?.get(this.sid);
     return data ?? {};
   }
@@ -93,9 +102,10 @@ export class AppSession<T extends SessionRecord = SessionRecord>
     await this.setAll(data);
   }
   async setAll(data: T): Promise<void> {
-    const guest = this.cookies.get(this.name);
-    if (!guest?.value || guest.value == '') {
-      await this.cookies.set(this.name, this.encode(this.sid), {
+    this._initID();
+    const guest = this._getID();
+    if (!guest || guest == '') {
+      await this.getCookies().set(this.name, this.encode(this.sid), {
         path: this.cookieOpts?.path || '/',
         httpOnly: this.cookieOpts?.httpOnly ?? true,
         domain: this.cookieOpts?.domain || undefined,
@@ -103,9 +113,8 @@ export class AppSession<T extends SessionRecord = SessionRecord>
         secure: this.cookieOpts?.secure || false
       });
     }
-    console.log('setAll', data);
     // await this.store.set(this._getID(), { ...data, cookie: this.cookieOpts });
-    await this.store.set(this.sid, data);
+    await this.store.set(this.sid, { ...data });
   }
   async destroy(key?: string | keyof T | undefined): Promise<void> {
     if (key) {
