@@ -121,20 +121,23 @@ As we mentioned before by default the package will use `MemoryStore`, which is a
 	import RedisStoreFactory from 'connect-redis';
 
 	export const session = nextAppSession({
-    	name: 'EXAMPLE_SID',
-    	secret: 'secret goes here' ,
-    	// Assign Redis store with connection details
-    	store: promisifyStore(
-			new RedisStore({
-				client: new Redis({
-					host: 'localhost',
-					port: 6381
-				}),
-				prefix: 'exampleapp:'
-			})
-		)
+      name: 'EXAMPLE_SID',
+      secret: 'secret goes here' ,
+      // Assign Redis store with connection details
+      store: promisifyStore(
+        new RedisStore({
+          client: new Redis({
+            host: 'localhost',
+            port: 6381
+          }),
+          prefix: 'exampleapp:'
+        })
+      )
 	}); 
 	```
+ 
+### Other compatible stores
+Any [express session store pacakge](https://github.com/expressjs/session/tree/master#compatible-session-stores) should be supported as long as they're passed through `promisifyStore`
  
 ## Example
 a Next.js demo app is located under `./example` of this repo.
