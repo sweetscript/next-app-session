@@ -18,8 +18,5 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.1.6"
-  },
-  "devDependencies": {
-    "@types/connect-redis": "^0.0.20"
   }
 }

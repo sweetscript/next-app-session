@@ -107,29 +107,29 @@ As we mentioned before by default the package will use `MemoryStore`, which is a
 	```
 	npm i ioredis connect-redis
  	```
- 	```
- 	npm i -D @types/connect-redis
-	```
+
 3. Update the session config so its like follows with the port you're redis instance is running on:
 	```typescript
-	import nextAppSession from 'next-app-session';
+	import nextAppSession, {promisifyStore} from 'next-app-session';
   	import Redis from 'ioredis';
 	import RedisStoreFactory from 'connect-redis';
 
-	export const session = nextAppSession<MySessionData>({
+	export const session = nextAppSession({
     	name: 'EXAMPLE_SID',
     	secret: 'secret goes here' ,
-    	// assign redis store
+    	// Assign Redis store with connection details
     	store: promisifyStore(
-    	  new (RedisStoreFactory(expressSession))({
-			client: new Redis({
-			  host: 'localhost',
-			  port: 6379
-			})
-      	  })
-    	),
+    	  new RedisStore({
+      	    client: new Redis({
+              host: 'localhost',
+              port: 6381
+            }),
+		    prefix: 'exampleapp:'
+    	  })
+		)
 	}); 
 	```
+ 
 ## Example
 a Next.js demo app is located under `./example` of this repo.
 
