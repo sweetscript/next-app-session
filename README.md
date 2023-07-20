@@ -1,6 +1,11 @@
-# next-app-session
+# Next-App-Session
+![npm](https://img.shields.io/npm/v/next-app-session)
+![npm bundle size](https://img.shields.io/bundlephobia/min/next-app-session) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/next-app-session)
+![ts](https://badgen.net/badge/Built%20With/TypeScript/blue?icon=typescript)
+![nextjs](https://badgen.net/badge/Built%20for/Next.js%20v13/purple?icon=vercel)
+![nextjs](https://badgen.net/badge/Supports:/Redis/orange?icon=redis)
 
-This package is built to work with Next.js 13 App router and Server Components & Actions.
+This package is built to work with Next.js v13 App router and Server Components & Actions.
 
 This Next.js package enables secure storage of sessions in a server side store like `express-session` or `redis` or others, the package uses the next.js dynamic function `cookies()` to store the session id on the client side and that session id is associated with user data on the server store.
 
@@ -49,17 +54,18 @@ Package was inspired by `express-session` & `next-session`.
       await session().set('counter', newValue);
    }
    ```
+
 ---
 
 ## Options
 
-| Property  | Description  | Default  |
-|:----------|:----------|:----------|
-| name | Name of the client cookie that holds the session ID |'sid' | 
-| secret | This is the secret used to sign the session cookie which will hold the user session ID. If left empty the session ID is not signed/encoded |  |
-| store | The session store instance, defaults to a new `MemoryStore` instance which is for dev purposes only, other production compatible stores can be used, more on how to use them below  | new MemoryStore() |
-| genid | This callback can be used to override the unique session id creation allowing you to set your own, By default nanoid package is used to generate new session IDs | nanoid |
-| cookie | An object can be passed here to control the configuration of the client cookie | |
+| Property   | Description  | Default  |
+|:-----------|:----------|:----------|
+| **name**   | Name of the client cookie that holds the session ID |'sid' | 
+| **secret** | This is the secret used to sign the session cookie which will hold the user session ID. If left empty the session ID is not signed/encoded |  |
+| **store**  | The session store instance, defaults to a new `MemoryStore` instance which is for dev purposes only, other production compatible stores can be used, more on how to use them below  | new MemoryStore() |
+| **genid**  | This callback can be used to override the unique session id creation allowing you to set your own, By default nanoid package is used to generate new session IDs | nanoid |
+| **cookie** | An object can be passed here to control the configuration of the client cookie | |
 
 ---
 
@@ -119,13 +125,13 @@ As we mentioned before by default the package will use `MemoryStore`, which is a
     	secret: 'secret goes here' ,
     	// Assign Redis store with connection details
     	store: promisifyStore(
-    	  new RedisStore({
-      	    client: new Redis({
-              host: 'localhost',
-              port: 6381
-            }),
-		    prefix: 'exampleapp:'
-    	  })
+			new RedisStore({
+				client: new Redis({
+					host: 'localhost',
+					port: 6381
+				}),
+				prefix: 'exampleapp:'
+			})
 		)
 	}); 
 	```
