@@ -1,7 +1,9 @@
 import { CookieOptions, Options, SessionData, SessionHandler, SessionRecord, Store } from './types';
-export default function nextAppSession<T extends SessionRecord>(options: Options): () => AppSession<T>;
+import { NextApiRequest } from 'next';
+export default function nextAppSession<T extends SessionRecord>(options: Options): (req?: NextApiRequest) => AppSession<T>;
 export declare class AppSession<T extends SessionRecord = SessionRecord> implements SessionHandler<T> {
     static instance: AppSession;
+    protected req?: NextApiRequest;
     protected store: Store;
     protected sid: string;
     protected name: string;
@@ -9,8 +11,9 @@ export declare class AppSession<T extends SessionRecord = SessionRecord> impleme
     protected genid: () => string;
     protected cookieOpts?: Partial<CookieOptions>;
     protected touchAfter?: boolean;
-    constructor(store: Store, options: Options);
-    private getCookies;
+    constructor(store: Store, options: Options, req?: NextApiRequest);
+    private getCookie;
+    private setCookie;
     private _getID;
     private _initID;
     private encode;

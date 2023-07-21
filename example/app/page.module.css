@@ -60,6 +60,28 @@
   max-width: 32rem;
 }
 
+.tabs{
+  display: flex;
+  margin-bottom: 20px;
+}
+.tabs a{
+  display: inline-block;
+  margin-right: 5px;
+  border: 1px solid #333333;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  color: #000;
+  cursor: pointer;
+}
+.tabs a:hover{
+  background: #eee;
+}
+.tabSelected{
+  background: #2f2f2f !important;
+  color: #FFF !important;
+}
+
 @media (prefers-color-scheme: dark) {
 
 }
