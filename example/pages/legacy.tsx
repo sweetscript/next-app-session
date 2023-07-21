@@ -127,8 +127,8 @@ export default function handler(props: {
   );
 }
 
-// This gets called on every request
-export async function getServerSideProps({ req, res }: any) {
+// Serve session as props
+export async function getServerSideProps({ req }: any) {
   // Get data from session
   const data = await session(req).all();
 

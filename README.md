@@ -71,6 +71,21 @@ Package was inspired by [express-session](https://www.npmjs.com/package/express-
    }
    ```
 
+**Page router usage example:**
+   ```typescript
+   // Example for route handler
+   import { session } from '../lib/session'; //We import it from the initialisation file we created earlier
+
+	// Serve session as props
+	export async function getServerSideProps({ req }) {
+		// Get data from session
+		const data = await session(req).all();
+	
+		// Pass data to the page via props
+		return { props: { ...data } };
+	}
+   ```
+
 ---
 
 ## Options

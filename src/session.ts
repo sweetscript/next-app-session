@@ -74,7 +74,6 @@ export class AppSession<T extends SessionRecord = SessionRecord>
 
   private _initID() {
     let id = this._getID();
-    console.log('id', id);
     if (!id && this.genid) {
       id = this.genid();
     }
@@ -94,7 +93,6 @@ export class AppSession<T extends SessionRecord = SessionRecord>
   async all(): Promise<SessionData<T> | null | undefined> {
     this._initID();
     const data = await this.store?.get(this.sid);
-    console.log('data', data);
     return data ?? {};
   }
   async get(key: string | keyof T): Promise<any> {
