@@ -11,25 +11,22 @@ import { MemoryStore } from './memory';
 import signature from 'cookie-signature';
 import { cookies } from 'next/headers';
 
+// import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { NextApiRequest } from 'next';
+import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+
 export default function nextAppSession<T extends SessionRecord>(
   options: Options
-): () => AppSession<T> {
+): (req?: NextApiRequest) => AppSession<T> {
   const store = options.store || new MemoryStore();
-  return () => new AppSession<T>(store, options);
-  // let store = options.store as Store;
-  // if (!store) {
-  //   if (!(global as any).sessionMemoryStore) {
-  //     (global as any).sessionMemoryStore = new MemoryStore();
-  //   }
-  //   store = (global as any).sessionMemoryStore as Store;
-  // }
-  // return () => new AppSession<T>(store, options);
+  return (req?: NextApiRequest) => new AppSession<T>(store, options, req);
 }
 
 export class AppSession<T extends SessionRecord = SessionRecord>
   implements SessionHandler<T>
 {
   static instance: AppSession;
+  protected req?: NextApiRequest;
   protected store: Store;
   protected sid: string;
   protected name: string;
@@ -38,11 +35,12 @@ export class AppSession<T extends SessionRecord = SessionRecord>
   protected cookieOpts?: Partial<CookieOptions>;
   protected touchAfter?: boolean;
 
-  constructor(store: Store, options: Options) {
-    if (AppSession.instance) {
-      return AppSession.instance as AppSession<T>;
-    }
-    AppSession.instance = this;
+  constructor(store: Store, options: Options, req?: NextApiRequest) {
+    // if (AppSession.instance) {
+    //   return AppSession.instance as AppSession<T>;
+    // }
+    // AppSession.instance = this;
+    this.req = req;
     this.store = store;
     this.name = options?.name || 'sid';
     this.secret = options?.secret;
@@ -50,16 +48,28 @@ export class AppSession<T extends SessionRecord = SessionRecord>
     this.cookieOpts = options?.cookie;
     this.touchAfter = options?.touchAfter;
 
-    // this.sid = this._getID();
     return this;
   }
 
-  private getCookies() {
-    return cookies();
+  private getCookie(name: string) {
+    if (this.req?.cookies) {
+      return this.req.cookies[name];
+    }
+    return cookies().get(name)?.value;
+  }
+
+  private setCookie(name: string, value: any, cookieOpts?: any) {
+    if (this.req?.headers) {
+      // @ts-ignore
+      const headers = new Headers(this.req.headers);
+      const cookies = new RequestCookies(headers);
+      cookies.set(name, value);
+    }
+    return cookies().set(name, value, cookieOpts);
   }
 
   private _getID(): string | null | undefined {
-    return this.decode(this.getCookies().get(this.name)?.value);
+    return this.decode(this.getCookie(this.name));
   }
 
   private _initID() {
@@ -103,9 +113,9 @@ export class AppSession<T extends SessionRecord = SessionRecord>
   }
   async setAll(data: T): Promise<void> {
     this._initID();
-    const guest = this._getID();
-    if (!guest || guest == '') {
-      await this.getCookies().set(this.name, this.encode(this.sid), {
+    const existingID = this._getID();
+    if (!existingID || existingID == '') {
+      await this.setCookie(this.name, this.encode(this.sid), {
         path: this.cookieOpts?.path || '/',
         httpOnly: this.cookieOpts?.httpOnly ?? true,
         domain: this.cookieOpts?.domain || undefined,
@@ -113,7 +123,7 @@ export class AppSession<T extends SessionRecord = SessionRecord>
         secure: this.cookieOpts?.secure || false
       });
     }
-    // await this.store.set(this._getID(), { ...data, cookie: this.cookieOpts });
+    // await this.store.set(this.sid, { ...data, cookie: this.cookieOpts });
     await this.store.set(this.sid, { ...data });
   }
   async destroy(key?: string | keyof T | undefined): Promise<void> {

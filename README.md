@@ -5,7 +5,7 @@
 ![nextjs](https://badgen.net/badge/Built%20for/Next.js%20v13/purple?icon=vercel)
 ![nextjs](https://badgen.net/badge/Supports:/Redis/orange?icon=redis)
 
-This package is built to work with Next.js v13 App router and Server Components & Actions.
+This package is built to work with Next.js v13 App router and Server Components & Actions, additionally it also supports Pages router and middleware.
 
 This Next.js package enables secure storage of sessions in a server side store like `express-session` or `redis` or others, the package uses the next.js dynamic function [cookies()](https://nextjs.org/docs/app/api-reference/functions/cookies) to store the session id on the client side and that session id is then associated with user data on the server store.
 
@@ -37,7 +37,23 @@ Package was inspired by [express-session](https://www.npmjs.com/package/express-
       ...
    }); 
    ```
-3.  You can now use `session()` to read session data in [Server Components](https://nextjs.org/docs/getting-started/react-essentials) or Read/Write data in [Route Handler](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) and [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions). It follows the same usage rules as the [cookies() dynamic function](https://nextjs.org/docs/app/api-reference/functions/cookies)
+3.  You can now use `session()` or `session(req)` in your App router & Page router i that order
+
+	#### App router: Route Handler/Server Components/Server Actions
+
+	```typescript
+	await session().get()
+	```
+ 
+	#### Pages router/middleware:
+
+	```typescript
+	await session(req).get() // where req is the IncomingMessage/NextApiRequest object
+	```   
+
+> Note:  in App router, `session` can only read data in [Server Components](https://nextjs.org/docs/getting-started/react-essentials) while it can read+write data in [Route Handler](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) and [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions). It follows the same usage rules as the [cookies() dynamic function](https://nextjs.org/docs/app/api-reference/functions/cookies)
+
+**A Router handler usage example:**
    ```typescript
    // Example for route handler
    import { session } from '../lib/session'; //We import it from the initialisation file we created earlier
@@ -53,6 +69,21 @@ Package was inspired by [express-session](https://www.npmjs.com/package/express-
       // Update counter session
       await session().set('counter', newValue);
    }
+   ```
+
+**Page router usage example:**
+   ```typescript
+   // Example for route handler
+   import { session } from '../lib/session'; //We import it from the initialisation file we created earlier
+
+	// Serve session as props
+	export async function getServerSideProps({ req }) {
+		// Get data from session
+		const data = await session(req).all();
+	
+		// Pass data to the page via props
+		return { props: { ...data } };
+	}
    ```
 
 ---
@@ -137,7 +168,7 @@ As we mentioned before by default the package will use `MemoryStore`, which is a
 	```
  
 ### Other compatible stores
-Any [express session store package](https://github.com/expressjs/session/tree/master#compatible-session-stores) should be supported as long as they're passed through `promisifyStore`
+Any [express session store package](https://github.com/expressjs/session/tree/master#compatible-session-stores) should be supported as long as they're passed through `promisifyStore` utility function
  
 ## Example
 a Next.js demo app is located under `./example` of this repo.
