@@ -1,6 +1,6 @@
 {
   "name": "next-app-session",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Next.js App router server-side session library",
   "type": "module",
   "main": "dist/index.js",

@@ -2,19 +2,30 @@ import { SessionData, Store } from './types';
 
 export class MemoryStore implements Store {
   store: Map<string, string>;
+  _instance?: MemoryStore;
 
   constructor() {
-    if ((global as any).sessionMemoryStore) {
-      return (global as any).sessionMemoryStore;
+    if (this._instance) {
+      return this._instance;
+    }
+    if (typeof global !== 'undefined') {
+      if ((global as any).sessionMemoryStore) {
+        return (global as any).sessionMemoryStore;
+      }
     }
     this.store = new Map();
-    (global as any).sessionMemoryStore = this;
+
+    this._instance = this;
+    if (typeof global !== 'undefined') {
+      (global as any).sessionMemoryStore = this;
+    }
     return this;
   }
 
   async get(sid: string): Promise<SessionData | null> {
     const sess = this.store.get(sid);
     if (sess) {
+      console.log('next-app-session sess', sess);
       const session = JSON.parse(sess, (key, value) => {
         if (key === 'expires') return new Date(value);
         return value;

@@ -20,7 +20,7 @@ export default function handler(props: {
     if (isBusy) return;
     setIsBusy(true);
 
-    fetch('/api/legacy/counter/increment', {
+    fetch('/api/legacy/increment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     })
