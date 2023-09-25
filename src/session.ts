@@ -36,10 +36,11 @@ export class AppSession<T extends SessionRecord = SessionRecord>
   protected touchAfter?: boolean;
 
   constructor(store: Store, options: Options, req?: NextApiRequest) {
-    // if (AppSession.instance) {
-    //   return AppSession.instance as AppSession<T>;
-    // }
-    // AppSession.instance = this;
+    if (!req && typeof window !== 'undefined') {
+      throw new Error(
+        'Wrong implementation, please check the next-app-session docs for more info'
+      );
+    }
     this.req = req;
     this.store = store;
     this.name = options?.name || 'sid';
@@ -123,7 +124,6 @@ export class AppSession<T extends SessionRecord = SessionRecord>
         secure: this.cookieOpts?.secure || false
       });
     }
-    // await this.store.set(this.sid, { ...data, cookie: this.cookieOpts });
     await this.store.set(this.sid, { ...data });
   }
   async destroy(key?: string | keyof T | undefined): Promise<void> {
