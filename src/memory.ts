@@ -25,7 +25,6 @@ export class MemoryStore implements Store {
   async get(sid: string): Promise<SessionData | null> {
     const sess = this.store.get(sid);
     if (sess) {
-      console.log('next-app-session sess', sess);
       const session = JSON.parse(sess, (key, value) => {
         if (key === 'expires') return new Date(value);
         return value;
