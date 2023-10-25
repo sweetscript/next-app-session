@@ -121,7 +121,9 @@ export class AppSession<T extends SessionRecord = SessionRecord>
         httpOnly: this.cookieOpts?.httpOnly ?? true,
         domain: this.cookieOpts?.domain || undefined,
         sameSite: this.cookieOpts?.sameSite,
-        secure: this.cookieOpts?.secure || false
+        secure: this.cookieOpts?.secure || false,
+        maxAge: this.cookieOpts?.maxAge || undefined,
+        expires: this.cookieOpts?.expires || undefined
       });
     }
     await this.store.set(this.sid, { ...data });
