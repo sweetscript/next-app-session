@@ -1,4 +1,10 @@
 # Next-App-Session
+
+> [!CAUTION]
+> This package is no longer maintained, use https://unstorage.unjs.io/ instead
+
+---
+
 ![npm](https://img.shields.io/npm/v/next-app-session)
 ![npm bundle size](https://img.shields.io/bundlephobia/min/next-app-session) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/next-app-session)
 ![ts](https://badgen.net/badge/Built%20With/TypeScript/blue?icon=typescript)
